@@ -1,0 +1,103 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page isELIgnored="false" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<base href="<%=basePath %>" />
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>分类属性发布</title>
+</head>
+<body>
+
+		<select class="easyui-combobox" name="flbh1" id="attr_publish_class_1_select"  ></select>
+		<br>
+		
+		<select class="easyui-combobox" name="flbh2" id="attr_publish_class_2_select" ></select>
+		<br>
+		<div id="attr_publish_inner">
+			属性列表
+		</div>
+		
+		<a href="javascript:;" onclick="goto_attr_add()">添加分类信息</a>
+	
+	<script type="text/javascript">
+	
+		$(function () {
+			$("#attr_publish_class_1_select").combobox({
+				method : "get",
+				url	:	"js/json/class_1.js",
+				textField	:	"flmch1",
+				valueField	:	"id",
+				value	:	"请选择",
+				width	:	80,
+				onSelect	:	function(){
+					var class_1_id = $(this).combobox("getValue");
+					$("#attr_publish_class_2_select").combobox({
+						method	:	"get",
+						url		:	"js/json/class_2_"+class_1_id+".js",
+						textField	:	"flmch2",
+						valueField	:	"id",
+						width	:	80,
+						value	:	"请选择",
+						onSelect	:	function(){
+							var class_2_id = $(this).combobox("getValue");
+							$('#attr_publish_inner').datagrid({
+								method:"post",
+								url:"get_attr_by_class_2_id_json.do",  
+								queryParams: {
+									"class_2_id":class_2_id
+								},
+							    columns:[[    
+							        {field:'shxm_mch',title:'属性名称',width:100},    
+							        {field:'shfqy',title:'是否启用',width:100},    
+							        {field:'chjshj',title:'创建时间',width:150,
+							        	formatter: function(value,row,index){
+											var createtime  = new Date(value);
+											return  createtime.toLocaleString(); 
+										}
+							        },
+							        {field:'list_value',title:'属性值', width:200,
+										formatter: function(value,row,index){
+											var valueStr = "";
+											$(value).each(function(i,json){
+												valueStr = valueStr+"/"+json.shxzh + json.shxzh_mch;
+											})
+											return valueStr;
+										}
+									}
+    
+							    ]]
+							});  
+						}
+					})
+				}
+			})
+		})
+		
+		
+		function goto_attr_add(){
+			var class_1_id = $("#attr_publish_class_1_select option:selected").val();
+			
+			var class_2_id = $("#attr_publish_class_2_select option:selected").val();
+			var class_2_name = $("#attr_publish_class_2_select option:selected").html();
+			alert(class_1_id);
+			alert(class_2_id);
+			return;
+			if(class_1_id == 0){
+				alert("请选择一级分类");
+			}else if(class_2_id =="请选择"){
+				alert("请选择二级分类");
+			}else{
+				window.open("goto_attr_add/"+class_2_id+"/"+class_2_name+".do");
+			}
+			
+		} 
+	</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liang.manager.dao.AttrValueMapper">
+
+	<select id="select_attr_by_class_2_id" parameterType="int"
+		resultMap="select_attr_by_class_2_id_map">
+		select a.id as attr_id,b.id as value_id,a.*, b.* from
+		t_mall_attr a,t_mall_value b
+		WHERE a.id = b.shxm_id
+		AND a.flbh2 =
+		#{class_2_id}
+	</select>
+
+	<resultMap type="com.liang.manager.bean.OBJECT_T_MALL_ATTR"
+		id="select_attr_by_class_2_id_map" autoMapping="true">
+		<result column="attr_id" property="id" />
+		<collection ofType="com.liang.manager.bean.T_MALL_VALUE"
+			property="list_value" autoMapping="true">
+			<result column="value_id" property="id" />
+		</collection>
+	</resultMap>
+
+	<insert useGeneratedKeys="true" keyColumn="id" keyProperty="id"
+	id="insert_into_t_mall_attr" parameterType="com.liang.manager.bean.OBJECT_T_MALL_ATTR" >
+		insert into
+		t_mall_attr(shxm_mch, flbh2)
+		values(#{shxm_mch},#{flbh2})
+	</insert>
+
+	<insert id="insert_into_t_mall_value" parameterType="java.util.Map">
+		insert into
+		t_mall_value(shxzh,shxm_id,shxzh_mch)
+		values
+		<foreach collection="list_value" item="val" separator=",">
+			(#{val.shxzh},#{attr_id},#{val.shxzh_mch})
+		</foreach>
+	</insert>
+
+</mapper>
