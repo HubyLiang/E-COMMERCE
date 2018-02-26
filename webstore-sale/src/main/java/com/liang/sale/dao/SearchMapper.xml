@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liang.sale.dao.SearchMapper">
+
+	<select id="select_object_sku_by_sku_id" resultMap="select_object_sku_by_sku_id_map">
+		SELECT 
+		sku.id sku_id, spu.id spu_id, sku.*, spu.*, attr.id attr_id, val.id value_id, attr.shxm_mch attr_name, CONCAT(val.shxzh, val.shxzh_mch) value_name
+		from 
+		t_mall_sku sku,
+		t_mall_product spu,
+		t_mall_attr attr,
+		t_mall_value val,
+		t_mall_sku_attr_value attr_value 
+		
+		WHERE
+		
+		sku.shp_id = spu.Id 
+		AND
+		sku.Id = attr_value.sku_id
+		AND
+		attr_value.shxm_id = attr.Id
+		AND
+		attr_value.shxzh_id = val.Id
+		AND
+		sku.Id = #{sku_id}
+	</select>
+	<resultMap type="com.liang.sale.bean.OBJECT_T_MALL_SKU" id="select_object_sku_by_sku_id_map" autoMapping="true">
+		<result column="sku_id" property="id"/>
+		<association property="spu" autoMapping="true" javaType="com.liang.sale.bean.T_MALL_PRODUCT">
+			<result column="spu_id" property="id"/>
+		</association>
+		<collection ofType="com.liang.sale.bean.OBJECT_T_MALL_ATTR_VALUE_NAME" property="list_attr_value_name" autoMapping="true">
+		</collection>
+	</resultMap>
+	
+
+	<select id="select_sku_list_by_shp_id" resultType="com.liang.sale.bean.T_MALL_SKU" parameterType="int">
+		select * from t_mall_sku where shp_id = #{shp_id}
+	</select>
+
+
+	<select id="select_sku_by_class_2_id_and_attr_value"
+		parameterType="Map" resultMap="select_sku_by_class_2_id_and_attr_value_map">
+		select sku.id as sku_id,spu.id as
+		spu_id,tm.id as tm_id, sku.*,spu.*,tm.* FROM
+		t_mall_sku sku,
+		t_mall_product spu,
+		t_mall_class_1 class_1,
+		t_mall_tm_class tm_class,
+		t_mall_trade_mark tm
+		where
+		sku.shp_id = spu.Id AND
+		spu.flbh1 = class_1.Id AND
+		class_1.Id = tm_class.flbh1 AND
+		tm_class.pp_id = tm.Id and spu.pp_id = tm.Id
+		AND
+		spu.flbh2 =
+		#{class_2_id}
+		${sql}
+		${order}
+	</select>
+
+	<resultMap type="com.liang.sale.bean.OBJECT_T_MALL_SKU" id="select_sku_by_class_2_id_and_attr_value_map"
+		autoMapping="true">
+		<result column="sku_id" property="id" />
+		<association property="spu" javaType="com.liang.sale.bean.T_MALL_PRODUCT"
+			autoMapping="true">
+			<result column="spu_id" property="id" />
+		</association>
+		<association property="tm"
+			javaType="com.liang.sale.bean.T_MALL_TRADE_MARK" autoMapping="true">
+			<result column="tm_id" property="id" />
+		</association>
+	</resultMap>
+
+	<select id="select_attr_by_class_2_id" parameterType="int"
+		resultMap="select_attr_by_class_2_id_map">
+		select a.id as attr_id,b.id as value_id,a.*, b.* from
+		t_mall_attr a,t_mall_value b,t_mall_sku_attr_value c
+		WHERE a.id = b.shxm_id and
+		a.id = c.shxm_id and b.id = c.shxzh_id
+		AND a.flbh2 =
+		#{class_2_id}
+	</select>
+
+	<resultMap type="com.liang.sale.bean.OBJECT_T_MALL_ATTR" id="select_attr_by_class_2_id_map"
+		autoMapping="true">
+		<result column="attr_id" property="id" />
+		<collection ofType="com.liang.sale.bean.T_MALL_VALUE"
+			property="list_value" autoMapping="true">
+			<result column="value_id" property="id" />
+		</collection>
+	</resultMap>
+
+	<select id="select_tm_by_class_2_id" resultType="com.liang.sale.bean.T_MALL_TRADE_MARK">
+		select DISTINCT
+		tm.* from t_mall_sku sku, t_mall_product spu,t_mall_trade_mark tm
+		where
+		sku.shp_id = spu.id and spu.pp_id = tm.id
+		and spu.flbh2 = #{class_2_id}
+	</select>
+
+</mapper>

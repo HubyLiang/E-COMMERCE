@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liang.sale.dao.ShoppingCarMapper">
+
+	<select id="select_shoppingCar_by_user" parameterType="com.liang.sale.bean.T_MALL_USER" resultType="com.liang.sale.bean.T_MALL_SHOPPINGCAR">
+		select * from t_mall_shoppingcar where yh_id = #{id}
+	</select>
+	
+	<insert id="insert_car" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		insert into t_mall_shoppingcar(
+			sku_mch,
+			sku_jg,
+			tjshl,
+			hj,
+			shp_id,
+			yh_id,
+			sku_id,
+			shp_tp,
+			kcdz
+		) 
+		values(
+			#{sku_mch},
+			#{sku_jg},
+			#{tjshl},
+			#{hj},
+			#{shp_id},
+			#{yh_id},
+			#{sku_id},
+			#{shp_tp},
+			#{kcdz}
+		)
+	</insert>
+
+	<update id="update_car">
+		update t_mall_shoppingcar
+		<set>
+			<if test="hj != 0 and hj != null">
+				hj = #{hj},
+			</if>
+			<if test="tjshl != 0 and tjshl != null">
+				tjshl = #{tjshl},
+			</if>
+			<if test="shfxz != '' and shfxz != null">
+				shfxz = #{shfxz},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+</mapper>
