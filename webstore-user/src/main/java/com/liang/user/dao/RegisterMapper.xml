@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liang.user.dao.RegisterMapper">
+
+	<insert id="insert_user" parameterType="com.liang.user.bean.T_MALL_USER">
+		insert into t_mall_user
+		(
+		yh_mch,
+		yh_nch,
+		yh_mm,
+		yh_shjh,
+		yh_yx
+		)
+		values
+		(
+		#{yh_mch},
+		#{yh_nch},
+		#{yh_mm},
+		#{yh_shjh},
+		#{yh_yx}
+		)
+	
+	</insert>
+	
+</mapper>
